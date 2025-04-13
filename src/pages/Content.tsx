@@ -24,7 +24,8 @@ import {
   ListTodo,
   Eye,
   Clock,
-  BookOpen
+  BookOpen,
+  MessageSquare, // Add this import
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 

@@ -30,7 +30,8 @@ import {
   Clock,
   CircleDashed,
   CircleCheck,
-  Smartphone
+  Smartphone,
+  Code, // Add this import
 } from "lucide-react";
 
 const LocalSeo = () => {
