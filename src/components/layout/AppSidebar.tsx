@@ -24,7 +24,8 @@ import {
   SidebarMenuItem,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { UserProfileDropdown } from "@/components/auth/UserProfileDropdown";
+import { useAuth } from "@/contexts/AuthContext";
 
 const menuItems = [
   {
@@ -70,6 +71,8 @@ const menuItems = [
 ];
 
 export function AppSidebar() {
+  const { user } = useAuth();
+
   return (
     <Sidebar>
       <SidebarHeader className="flex items-center gap-2 p-4">
@@ -102,17 +105,19 @@ export function AppSidebar() {
       </SidebarContent>
       <SidebarFooter>
         <div className="flex items-center justify-between p-4 border-t border-sidebar-border">
-          <div className="flex items-center gap-3">
-            <Avatar>
-              <AvatarImage src="https://github.com/shadcn.png" />
-              <AvatarFallback>JD</AvatarFallback>
-            </Avatar>
-            <div>
-              <p className="text-sm font-medium">John Doe</p>
-              <p className="text-xs text-sidebar-foreground/60">Pro Plan</p>
+          {user ? (
+            <UserProfileDropdown />
+          ) : (
+            <div className="flex items-center justify-between w-full">
+              <a 
+                href="/auth/login" 
+                className="text-sm font-medium hover:text-white transition-colors"
+              >
+                Sign In
+              </a>
+              <Settings className="h-5 w-5 text-sidebar-foreground/60 cursor-pointer hover:text-sidebar-foreground transition-colors" />
             </div>
-          </div>
-          <Settings className="h-5 w-5 text-sidebar-foreground/60 cursor-pointer hover:text-sidebar-foreground transition-colors" />
+          )}
         </div>
       </SidebarFooter>
     </Sidebar>
