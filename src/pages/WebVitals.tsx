@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -101,7 +100,6 @@ const WebVitals = () => {
           </div>
         </div>
 
-        {/* URL Input */}
         <Card>
           <CardContent className="pt-6">
             <form onSubmit={handleUrlSubmit} className="flex gap-2">
@@ -120,7 +118,6 @@ const WebVitals = () => {
           </CardContent>
         </Card>
 
-        {/* Device Tabs */}
         <Tabs defaultValue="desktop">
           <div className="flex justify-between items-center mb-4">
             <TabsList>
@@ -135,7 +132,6 @@ const WebVitals = () => {
             </TabsList>
           </div>
 
-          {/* Desktop Content */}
           <TabsContent value="desktop" className="mt-0">
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
               {isLoading ? (
@@ -210,11 +206,10 @@ const WebVitals = () => {
                         </p>
                         <div className="flex items-center text-xs">
                           {(() => {
-                            // Get the current and old values for comparison
-                            const currentVal = mockHistoricalData[7][vital.name.toLowerCase() as keyof typeof mockHistoricalData[0]];
-                            const oldVal = mockHistoricalData[0][vital.name.toLowerCase() as keyof typeof mockHistoricalData[0]];
+                            const currentKey = vital.name.toLowerCase() as keyof typeof mockHistoricalData[0];
+                            const currentVal = Number(mockHistoricalData[7][currentKey]);
+                            const oldVal = Number(mockHistoricalData[0][currentKey]);
                             
-                            // Calculate percentage difference
                             const isImprovement = currentVal < oldVal;
                             const percentChange = Math.abs(((currentVal - oldVal) / oldVal) * 100);
                             
@@ -239,7 +234,6 @@ const WebVitals = () => {
               )}
             </div>
 
-            {/* Historical Trends Chart */}
             {!isLoading && !error && (
               <Card className="mt-6">
                 <CardHeader>
@@ -301,7 +295,6 @@ const WebVitals = () => {
               </Card>
             )}
 
-            {/* Improvement Tips */}
             {!isLoading && !error && (
               <Card className="mt-6">
                 <CardHeader>
@@ -336,7 +329,6 @@ const WebVitals = () => {
             )}
           </TabsContent>
 
-          {/* Mobile Content - Same structure as desktop, but would have different data */}
           <TabsContent value="mobile" className="mt-0">
             <Card>
               <CardContent className="pt-6">
