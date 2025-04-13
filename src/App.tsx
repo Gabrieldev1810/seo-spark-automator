@@ -18,6 +18,7 @@ import EEAT from "./pages/EEAT";
 import Mobile from "./pages/Mobile";
 import LocalSeo from "./pages/LocalSeo";
 import Content from "./pages/Content";
+import AgentSystem from "./pages/AgentSystem";
 
 const queryClient = new QueryClient();
 
@@ -68,6 +69,7 @@ const AppRoutes = () => {
       <Route path="/mobile" element={<ProtectedRoute><Mobile /></ProtectedRoute>} />
       <Route path="/local-seo" element={<ProtectedRoute><LocalSeo /></ProtectedRoute>} />
       <Route path="/content" element={<ProtectedRoute><Content /></ProtectedRoute>} />
+      <Route path="/agent-system" element={<ProtectedRoute><AgentSystem /></ProtectedRoute>} />
       
       {/* Role-based Routes examples */}
       <Route 

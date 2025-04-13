@@ -10,6 +10,7 @@ import {
   Settings,
   ShieldCheck,
   Smartphone,
+  Network
 } from "lucide-react";
 import {
   Sidebar,
@@ -69,6 +70,11 @@ const menuItems = [
     icon: FileText,
     href: "/content",
   },
+  {
+    title: "Agent System",
+    icon: Network,
+    href: "/agent-system",
+  }
 ];
 
 export function AppSidebar() {
