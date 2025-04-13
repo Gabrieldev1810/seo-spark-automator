@@ -12,6 +12,12 @@ import Signup from "./pages/auth/Signup";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
 import WebVitals from "./pages/WebVitals";
+import AiContent from "./pages/AiContent";
+import VoiceSearch from "./pages/VoiceSearch";
+import EEAT from "./pages/EEAT";
+import Mobile from "./pages/Mobile";
+import LocalSeo from "./pages/LocalSeo";
+import Content from "./pages/Content";
 
 const queryClient = new QueryClient();
 
@@ -56,6 +62,12 @@ const AppRoutes = () => {
       <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
       <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
       <Route path="/web-vitals" element={<ProtectedRoute><WebVitals /></ProtectedRoute>} />
+      <Route path="/ai-content" element={<ProtectedRoute><AiContent /></ProtectedRoute>} />
+      <Route path="/voice-search" element={<ProtectedRoute><VoiceSearch /></ProtectedRoute>} />
+      <Route path="/e-e-a-t" element={<ProtectedRoute><EEAT /></ProtectedRoute>} />
+      <Route path="/mobile" element={<ProtectedRoute><Mobile /></ProtectedRoute>} />
+      <Route path="/local-seo" element={<ProtectedRoute><LocalSeo /></ProtectedRoute>} />
+      <Route path="/content" element={<ProtectedRoute><Content /></ProtectedRoute>} />
       
       {/* Role-based Routes examples */}
       <Route 
