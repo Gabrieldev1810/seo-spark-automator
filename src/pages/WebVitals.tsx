@@ -9,7 +9,7 @@ import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
-import { Download, Link, Smartphone, Desktop, AlertTriangle, Info, ArrowDown, ArrowUp } from "lucide-react";
+import { Download, Link, Smartphone, Monitor, AlertTriangle, Info, ArrowDown, ArrowUp } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useWebVitals } from "@/services/webVitalsService";
 
@@ -125,7 +125,7 @@ const WebVitals = () => {
           <div className="flex justify-between items-center mb-4">
             <TabsList>
               <TabsTrigger value="desktop" className="flex items-center gap-1">
-                <Desktop className="h-4 w-4" />
+                <Monitor className="h-4 w-4" />
                 <span>Desktop</span>
               </TabsTrigger>
               <TabsTrigger value="mobile" className="flex items-center gap-1">
@@ -209,25 +209,28 @@ const WebVitals = () => {
                           Target: {vital.target}{vital.unit}
                         </p>
                         <div className="flex items-center text-xs">
-                          <span className={
-                            mockHistoricalData[7][vital.name.toLowerCase() as keyof typeof mockHistoricalData[0]] < 
-                            mockHistoricalData[0][vital.name.toLowerCase() as keyof typeof mockHistoricalData[0]] 
-                              ? 'text-seo-green' 
-                              : 'text-seo-red'
-                          }>
-                            {
-                              mockHistoricalData[7][vital.name.toLowerCase() as keyof typeof mockHistoricalData[0]] < 
-                              mockHistoricalData[0][vital.name.toLowerCase() as keyof typeof mockHistoricalData[0]] 
-                                ? <ArrowDown className="h-3 w-3 inline mr-1" /> 
-                                : <ArrowUp className="h-3 w-3 inline mr-1" />
-                            }
-                            {Math.abs(
-                              ((mockHistoricalData[7][vital.name.toLowerCase() as keyof typeof mockHistoricalData[0]] - 
-                                mockHistoricalData[0][vital.name.toLowerCase() as keyof typeof mockHistoricalData[0]]) /
-                                mockHistoricalData[0][vital.name.toLowerCase() as keyof typeof mockHistoricalData[0]]) * 100
-                            ).toFixed(1)}%
-                          </span>
-                          <span className="text-muted-foreground ml-1">vs 6 weeks ago</span>
+                          {(() => {
+                            // Get the current and old values for comparison
+                            const currentVal = mockHistoricalData[7][vital.name.toLowerCase() as keyof typeof mockHistoricalData[0]];
+                            const oldVal = mockHistoricalData[0][vital.name.toLowerCase() as keyof typeof mockHistoricalData[0]];
+                            
+                            // Calculate percentage difference
+                            const isImprovement = currentVal < oldVal;
+                            const percentChange = Math.abs(((currentVal - oldVal) / oldVal) * 100);
+                            
+                            return (
+                              <>
+                                <span className={isImprovement ? 'text-seo-green' : 'text-seo-red'}>
+                                  {isImprovement ? 
+                                    <ArrowDown className="h-3 w-3 inline mr-1" /> : 
+                                    <ArrowUp className="h-3 w-3 inline mr-1" />
+                                  }
+                                  {percentChange.toFixed(1)}%
+                                </span>
+                                <span className="text-muted-foreground ml-1">vs 6 weeks ago</span>
+                              </>
+                            );
+                          })()}
                         </div>
                       </div>
                     </CardContent>

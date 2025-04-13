@@ -95,7 +95,7 @@ export function AppSidebar() {
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton 
                     asChild
-                    active={location.pathname === item.href}
+                    isActive={location.pathname === item.href}
                   >
                     <Link to={item.href} className="flex items-center">
                       <item.icon className="h-5 w-5 mr-2" />
