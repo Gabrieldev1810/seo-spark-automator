@@ -22,7 +22,6 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarMenuLabel,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -74,7 +73,7 @@ export function AppSidebar() {
   return (
     <Sidebar>
       <SidebarHeader className="flex items-center gap-2 p-4">
-        <SidebarTrigger hideOnDesktop />
+        <SidebarTrigger />
         <div className="flex items-center space-x-2">
           <div className="bg-seo-blue rounded-md p-1">
             <Globe className="h-6 w-6 text-white" />
