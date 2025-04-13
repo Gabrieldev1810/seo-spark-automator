@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/sidebar";
 import { UserProfileDropdown } from "@/components/auth/UserProfileDropdown";
 import { useAuth } from "@/contexts/AuthContext";
+import { Link, useLocation } from "react-router-dom";
 
 const menuItems = [
   {
@@ -72,6 +73,7 @@ const menuItems = [
 
 export function AppSidebar() {
   const { user } = useAuth();
+  const location = useLocation();
 
   return (
     <Sidebar>
@@ -91,11 +93,14 @@ export function AppSidebar() {
             <SidebarMenu>
               {menuItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <a href={item.href} className="flex items-center">
+                  <SidebarMenuButton 
+                    asChild
+                    active={location.pathname === item.href}
+                  >
+                    <Link to={item.href} className="flex items-center">
                       <item.icon className="h-5 w-5 mr-2" />
                       <span>{item.title}</span>
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
@@ -109,12 +114,12 @@ export function AppSidebar() {
             <UserProfileDropdown />
           ) : (
             <div className="flex items-center justify-between w-full">
-              <a 
-                href="/auth/login" 
+              <Link 
+                to="/auth/login" 
                 className="text-sm font-medium hover:text-white transition-colors"
               >
                 Sign In
-              </a>
+              </Link>
               <Settings className="h-5 w-5 text-sidebar-foreground/60 cursor-pointer hover:text-sidebar-foreground transition-colors" />
             </div>
           )}

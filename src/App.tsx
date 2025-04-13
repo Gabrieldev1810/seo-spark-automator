@@ -11,6 +11,7 @@ import Login from "./pages/auth/Login";
 import Signup from "./pages/auth/Signup";
 import Profile from "./pages/Profile";
 import NotFound from "./pages/NotFound";
+import WebVitals from "./pages/WebVitals";
 
 const queryClient = new QueryClient();
 
@@ -54,6 +55,7 @@ const AppRoutes = () => {
       {/* Protected Routes */}
       <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
       <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+      <Route path="/web-vitals" element={<ProtectedRoute><WebVitals /></ProtectedRoute>} />
       
       {/* Role-based Routes examples */}
       <Route 
