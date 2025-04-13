@@ -44,52 +44,56 @@ const AuthRoute = ({ children }: { children: React.ReactNode }) => {
   return <>{children}</>;
 };
 
-const AppRoutes = () => (
-  <Routes>
-    {/* Auth Routes */}
-    <Route path="/auth/login" element={<AuthRoute><Login /></AuthRoute>} />
-    <Route path="/auth/signup" element={<AuthRoute><Signup /></AuthRoute>} />
-    
-    {/* Protected Routes */}
-    <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
-    <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-    
-    {/* Role-based Routes examples */}
-    <Route 
-      path="/admin" 
-      element={
-        <RoleGuard allowedRoles={['admin']}>
-          <div>Admin Page</div>
-        </RoleGuard>
-      } 
-    />
-    
-    <Route 
-      path="/editor" 
-      element={
-        <RoleGuard allowedRoles={['admin', 'editor']}>
-          <div>Editor Page</div>
-        </RoleGuard>
-      } 
-    />
-    
-    {/* 404 Route */}
-    <Route path="*" element={<NotFound />} />
-  </Routes>
-);
+const AppRoutes = () => {
+  return (
+    <Routes>
+      {/* Auth Routes */}
+      <Route path="/auth/login" element={<AuthRoute><Login /></AuthRoute>} />
+      <Route path="/auth/signup" element={<AuthRoute><Signup /></AuthRoute>} />
+      
+      {/* Protected Routes */}
+      <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
+      <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+      
+      {/* Role-based Routes examples */}
+      <Route 
+        path="/admin" 
+        element={
+          <RoleGuard allowedRoles={['admin']}>
+            <div>Admin Page</div>
+          </RoleGuard>
+        } 
+      />
+      
+      <Route 
+        path="/editor" 
+        element={
+          <RoleGuard allowedRoles={['admin', 'editor']}>
+            <div>Editor Page</div>
+          </RoleGuard>
+        } 
+      />
+      
+      {/* 404 Route */}
+      <Route path="*" element={<NotFound />} />
+    </Routes>
+  );
+};
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <AuthProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <AppRoutes />
-        </BrowserRouter>
-      </TooltipProvider>
-    </AuthProvider>
-  </QueryClientProvider>
-);
+const App = () => {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <BrowserRouter>
+        <AuthProvider>
+          <TooltipProvider>
+            <Toaster />
+            <Sonner />
+            <AppRoutes />
+          </TooltipProvider>
+        </AuthProvider>
+      </BrowserRouter>
+    </QueryClientProvider>
+  );
+};
 
 export default App;
