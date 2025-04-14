@@ -1,0 +1,404 @@
+import React, { useState, useEffect } from "react";
+import { AppLayout } from "@/components/layout/AppLayout";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Progress } from "@/components/ui/progress";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, BarChart, Bar } from "recharts";
+import { Download, Link, Smartphone, Monitor, AlertTriangle, Info, ArrowDown, ArrowUp, RefreshCw, Key } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { useWebVitals, testApiKey } from "@/services/webVitalsService";
+import { useToast } from "@/hooks/use-toast";
+
+const webVitalExplanations = {
+  "LCP": "Largest Contentful Paint measures loading performance. A good LCP is 2.5 seconds or less.",
+  "FID": "First Input Delay measures interactivity. A good FID is 100ms or less.",
+  "CLS": "Cumulative Layout Shift measures visual stability. A good CLS is 0.1 or less.",
+  "TTFB": "Time to First Byte measures server response time. A good TTFB is 500ms or less.",
+  "FCP": "First Contentful Paint measures when the browser renders the first bit of content. A good FCP is 1.8 seconds or less.",
+  "SI": "Speed Index measures how quickly content is visually displayed. A good SI is 3.3 seconds or less.",
+  "TBT": "Total Blocking Time measures the total amount of time when the main thread was blocked. A good TBT is 200ms or less."
+};
+
+const WebVitals = () => {
+  const [url, setUrl] = useState("");
+  const [urlInput, setUrlInput] = useState("");
+  const [device, setDevice] = useState<'mobile' | 'desktop'>('mobile');
+  const [apiKeyValid, setApiKeyValid] = useState<boolean | null>(null);
+  const { data: webVitals, isLoading, error } = useWebVitals(url, device);
+  const { toast } = useToast();
+  
+  // Test API key on component mount
+  useEffect(() => {
+    const validateApiKey = async () => {
+      const isValid = await testApiKey();
+      setApiKeyValid(isValid);
+      
+      if (!isValid) {
+        toast({
+          title: "API Key Issue",
+          description: "There was a problem with the API key. Some features may not work correctly.",
+          variant: "destructive",
+        });
+      }
+    };
+    
+    validateApiKey();
+  }, [toast]);
+  
+  const handleUrlSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (urlInput) {
+      setUrl(urlInput);
+    }
+  };
+
+  const handleExport = () => {
+    if (!webVitals.length) return;
+    
+    const csvContent = [
+      ['Metric', 'Value', 'Target', 'Status', 'Percentile'].join(','),
+      ...webVitals.map(vital => [
+        vital.name,
+        vital.value,
+        vital.target,
+        vital.status,
+        vital.percentile || 'N/A'
+      ].join(','))
+    ].join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `web-vitals-${url}-${new Date().toISOString()}.csv`;
+    link.click();
+  };
+
+  return (
+    <AppLayout>
+      <div className="space-y-6">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div>
+            <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Core Web Vitals Analysis</h1>
+            <p className="text-muted-foreground">
+              Track and optimize your site's user experience metrics
+            </p>
+          </div>
+          <div className="flex flex-col sm:flex-row gap-2">
+            <Button 
+              variant="outline" 
+              className="flex items-center gap-1"
+              onClick={handleExport}
+              disabled={!webVitals.length}
+            >
+              <Download className="h-4 w-4" />
+              <span>Export Report</span>
+            </Button>
+          </div>
+        </div>
+
+        {apiKeyValid === false && (
+          <Alert variant="destructive">
+            <Key className="h-4 w-4" />
+            <AlertTitle>API Key Issue</AlertTitle>
+            <AlertDescription>
+              There was a problem with the API key. Some features may not work correctly. Please check your API key configuration.
+            </AlertDescription>
+          </Alert>
+        )}
+
+        <Card>
+          <CardContent className="pt-6">
+            <form onSubmit={handleUrlSubmit} className="flex gap-2">
+              <div className="flex items-center border rounded-md px-3 flex-1">
+                <Link className="h-4 w-4 text-muted-foreground mr-2" />
+                <Input 
+                  type="text"
+                  placeholder="Enter website URL" 
+                  value={urlInput}
+                  onChange={(e) => setUrlInput(e.target.value)}
+                  className="border-0 flex-1 focus-visible:ring-0 focus-visible:ring-offset-0"
+                />
+              </div>
+              <Button type="submit">Analyze</Button>
+            </form>
+          </CardContent>
+        </Card>
+
+        <Tabs defaultValue="mobile" onValueChange={(value) => setDevice(value as 'mobile' | 'desktop')}>
+          <div className="flex justify-between items-center mb-4">
+            <TabsList>
+              <TabsTrigger value="desktop" className="flex items-center gap-1">
+                <Monitor className="h-4 w-4" />
+                <span>Desktop</span>
+              </TabsTrigger>
+              <TabsTrigger value="mobile" className="flex items-center gap-1">
+                <Smartphone className="h-4 w-4" />
+                <span>Mobile</span>
+              </TabsTrigger>
+            </TabsList>
+          </div>
+
+          <TabsContent value="desktop" className="mt-0">
+            {isLoading ? (
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                {Array(4).fill(null).map((_, i) => (
+                  <Card key={i}>
+                    <CardHeader className="pb-2">
+                      <Skeleton className="h-4 w-24" />
+                    </CardHeader>
+                    <CardContent>
+                      <Skeleton className="h-8 w-20 mb-2" />
+                      <Skeleton className="h-4 w-full" />
+                      <Skeleton className="h-3 w-20 mt-1" />
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            ) : error ? (
+              <Card>
+                <CardContent className="pt-6">
+                  <Alert variant="destructive">
+                    <AlertTriangle className="h-4 w-4" />
+                    <AlertTitle>Error</AlertTitle>
+                    <AlertDescription>
+                      {error}. Please try again or check the URL.
+                    </AlertDescription>
+                  </Alert>
+                </CardContent>
+              </Card>
+            ) : webVitals.length > 0 ? (
+              <>
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                  {webVitals.map((vital) => (
+                    <Card key={vital.name}>
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-sm font-medium">{vital.name}</CardTitle>
+                        <CardDescription>
+                          {webVitalExplanations[vital.name as keyof typeof webVitalExplanations]?.split('.')[0]}
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="text-2xl font-bold">
+                            {vital.value.toFixed(2)}{vital.unit}
+                          </div>
+                          <div className={cn(
+                            "text-xs px-2 py-1 rounded-full",
+                            vital.status === "good" && "bg-seo-green/10 text-seo-green",
+                            vital.status === "needs-improvement" && "bg-seo-yellow/10 text-seo-yellow",
+                            vital.status === "poor" && "bg-seo-red/10 text-seo-red"
+                          )}>
+                            {vital.status === "good" && "Good"}
+                            {vital.status === "needs-improvement" && "Needs Improvement"}
+                            {vital.status === "poor" && "Poor"}
+                          </div>
+                        </div>
+                        <Progress
+                          value={(vital.value / vital.target) * 100}
+                          className={cn(
+                            vital.status === "good" && "bg-seo-green/20",
+                            vital.status === "needs-improvement" && "bg-seo-yellow/20",
+                            vital.status === "poor" && "bg-seo-red/20"
+                          )}
+                          indicatorClassName={cn(
+                            vital.status === "good" && "bg-seo-green",
+                            vital.status === "needs-improvement" && "bg-seo-yellow",
+                            vital.status === "poor" && "bg-seo-red"
+                          )}
+                        />
+                        <div className="mt-2">
+                          <p className="text-xs text-muted-foreground">
+                            Target: {vital.target}{vital.unit}
+                          </p>
+                          {vital.percentile && (
+                            <p className="text-xs text-muted-foreground">
+                              75th Percentile: {vital.percentile.toFixed(2)}{vital.unit}
+                            </p>
+                          )}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+
+                <Card className="mt-6">
+                  <CardHeader>
+                    <CardTitle>Performance Distribution</CardTitle>
+                    <CardDescription>How your site performs compared to others</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="h-[300px]">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <BarChart
+                          data={webVitals.map(vital => ({
+                            name: vital.name,
+                            value: vital.value,
+                            target: vital.target
+                          }))}
+                          margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+                        >
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis dataKey="name" />
+                          <YAxis />
+                          <Tooltip />
+                          <Legend />
+                          <Bar dataKey="value" name="Current Value" fill="#0284c7" />
+                          <Bar dataKey="target" name="Target" fill="#059669" />
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </CardContent>
+                </Card>
+              </>
+            ) : (
+              <Card>
+                <CardContent className="pt-6">
+                  <div className="text-center py-8">
+                    <Info className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+                    <h3 className="text-lg font-medium mb-2">Enter a URL to Analyze</h3>
+                    <p className="text-muted-foreground max-w-md mx-auto">
+                      Enter your website URL above to get detailed Core Web Vitals analysis and recommendations.
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+          </TabsContent>
+
+          <TabsContent value="mobile" className="mt-0">
+            {isLoading ? (
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                {Array(4).fill(null).map((_, i) => (
+                  <Card key={i}>
+                    <CardHeader className="pb-2">
+                      <Skeleton className="h-4 w-24" />
+                    </CardHeader>
+                    <CardContent>
+                      <Skeleton className="h-8 w-20 mb-2" />
+                      <Skeleton className="h-4 w-full" />
+                      <Skeleton className="h-3 w-20 mt-1" />
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            ) : error ? (
+              <Card>
+                <CardContent className="pt-6">
+                  <Alert variant="destructive">
+                    <AlertTriangle className="h-4 w-4" />
+                    <AlertTitle>Error</AlertTitle>
+                    <AlertDescription>
+                      {error}. Please try again or check the URL.
+                    </AlertDescription>
+                  </Alert>
+                </CardContent>
+              </Card>
+            ) : webVitals.length > 0 ? (
+              <>
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                  {webVitals.map((vital) => (
+                    <Card key={vital.name}>
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-sm font-medium">{vital.name}</CardTitle>
+                        <CardDescription>
+                          {webVitalExplanations[vital.name as keyof typeof webVitalExplanations]?.split('.')[0]}
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="flex items-center justify-between mb-2">
+                          <div className="text-2xl font-bold">
+                            {vital.value.toFixed(2)}{vital.unit}
+                          </div>
+                          <div className={cn(
+                            "text-xs px-2 py-1 rounded-full",
+                            vital.status === "good" && "bg-seo-green/10 text-seo-green",
+                            vital.status === "needs-improvement" && "bg-seo-yellow/10 text-seo-yellow",
+                            vital.status === "poor" && "bg-seo-red/10 text-seo-red"
+                          )}>
+                            {vital.status === "good" && "Good"}
+                            {vital.status === "needs-improvement" && "Needs Improvement"}
+                            {vital.status === "poor" && "Poor"}
+                          </div>
+                        </div>
+                        <Progress
+                          value={(vital.value / vital.target) * 100}
+                          className={cn(
+                            vital.status === "good" && "bg-seo-green/20",
+                            vital.status === "needs-improvement" && "bg-seo-yellow/20",
+                            vital.status === "poor" && "bg-seo-red/20"
+                          )}
+                          indicatorClassName={cn(
+                            vital.status === "good" && "bg-seo-green",
+                            vital.status === "needs-improvement" && "bg-seo-yellow",
+                            vital.status === "poor" && "bg-seo-red"
+                          )}
+                        />
+                        <div className="mt-2">
+                          <p className="text-xs text-muted-foreground">
+                            Target: {vital.target}{vital.unit}
+                          </p>
+                          {vital.percentile && (
+                            <p className="text-xs text-muted-foreground">
+                              75th Percentile: {vital.percentile.toFixed(2)}{vital.unit}
+                            </p>
+                          )}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+
+                <Card className="mt-6">
+                  <CardHeader>
+                    <CardTitle>Mobile Performance Distribution</CardTitle>
+                    <CardDescription>How your site performs on mobile devices</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="h-[300px]">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <BarChart
+                          data={webVitals.map(vital => ({
+                            name: vital.name,
+                            value: vital.value,
+                            target: vital.target
+                          }))}
+                          margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+                        >
+                          <CartesianGrid strokeDasharray="3 3" />
+                          <XAxis dataKey="name" />
+                          <YAxis />
+                          <Tooltip />
+                          <Legend />
+                          <Bar dataKey="value" name="Current Value" fill="#0284c7" />
+                          <Bar dataKey="target" name="Target" fill="#059669" />
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </div>
+                  </CardContent>
+                </Card>
+              </>
+            ) : (
+              <Card>
+                <CardContent className="pt-6">
+                  <div className="text-center py-8">
+                    <Info className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+                    <h3 className="text-lg font-medium mb-2">Enter a URL to Analyze</h3>
+                    <p className="text-muted-foreground max-w-md mx-auto">
+                      Enter your website URL above to get detailed Core Web Vitals analysis and recommendations.
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
+          </TabsContent>
+        </Tabs>
+      </div>
+    </AppLayout>
+  );
+};
+
+export default WebVitals;

@@ -1,73 +1,84 @@
-# Welcome to your Lovable project
+# SEO Spark Automator
 
-## Project info
+A comprehensive SEO and web performance analysis tool that helps you optimize your website for search engines and improve user experience.
 
-**URL**: https://lovable.dev/projects/901c0f92-29e9-4f0b-b363-daa5e4670c4d
+## Features
 
-## How can I edit this code?
+- Core Web Vitals Analysis
+- SEO Score Tracking
+- Keyword Research and Analysis
+- Content Optimization
+- AI-Powered Recommendations
+- Project Management
 
-There are several ways of editing your application.
+## Getting Started
 
-**Use Lovable**
+### Prerequisites
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/901c0f92-29e9-4f0b-b363-daa5e4670c4d) and start prompting.
+- Node.js (v14 or higher)
+- npm or yarn
 
-Changes made via Lovable will be committed automatically to this repo.
+### Installation
 
-**Use your preferred IDE**
+1. Clone the repository:
+   ```
+   git clone https://github.com/yourusername/seo-spark-automator.git
+   cd seo-spark-automator
+   ```
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+2. Install dependencies:
+   ```
+   npm install
+   # or
+   yarn install
+   ```
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+3. Set up environment variables:
+   Create a `.env` file in the root directory with the following variables:
+   ```
+   VITE_LIGHTHOUSE_API_KEY=your_lighthouse_api_key
+   VITE_API_URL=http://localhost:3000
+   ```
 
-Follow these steps:
+   To get a Lighthouse API key:
+   1. Go to the [Google Cloud Console](https://console.cloud.google.com/)
+   2. Create a new project or select an existing one
+   3. Enable the PageSpeed Insights API
+   4. Create credentials (API key)
+   5. Copy the API key to your `.env` file
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+4. Start the development server:
+   ```
+   npm run dev
+   # or
+   yarn dev
+   ```
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+5. Open your browser and navigate to `http://localhost:5173`
 
-# Step 3: Install the necessary dependencies.
-npm i
+## Usage
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+### Core Web Vitals Analysis
 
-**Edit a file directly in GitHub**
+1. Navigate to the "Web Vitals" page
+2. Enter a URL to analyze
+3. Select the device type (mobile or desktop)
+4. Click "Analyze" to run the analysis
+5. View the results and recommendations
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+### SEO Score Tracking
 
-**Use GitHub Codespaces**
+1. Navigate to the "Projects" page
+2. Create a new project or select an existing one
+3. View the SEO score and recommendations
+4. Export the data for further analysis
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## License
 
-## What technologies are used for this project?
+This project is licensed under the MIT License - see the LICENSE file for details.
 
-This project is built with:
+## Acknowledgments
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/901c0f92-29e9-4f0b-b363-daa5e4670c4d) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+- [Google PageSpeed Insights API](https://developers.google.com/speed/docs/insights/v5/get-started)
+- [Core Web Vitals](https://web.dev/vitals/)
+- [Lighthouse](https://developers.google.com/web/tools/lighthouse)
