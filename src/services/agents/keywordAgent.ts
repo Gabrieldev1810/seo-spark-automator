@@ -1,3 +1,4 @@
+
 /**
  * KeywordAgent - Handles keyword research and optimization for AI-optimized pages
  */
@@ -135,4 +136,4 @@ export class KeywordAgent {
       suggestions
     };
   }
-} 
+}

@@ -1,3 +1,4 @@
+
 import { KeywordAgent } from './keywordAgent';
 
 interface ContentGenerationOptions {
@@ -317,4 +318,4 @@ export class ContentAgent {
       conclusion: `Congratulations! You've successfully completed ${task}.`
     });
   }
-} 
+}
