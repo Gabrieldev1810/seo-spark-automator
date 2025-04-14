@@ -150,6 +150,7 @@ class AgentService {
       agent.results.push({
         status: 'error',
         timestamp: new Date().toISOString(),
+        data: { error: error.message },
         error: error.message
       });
     }
@@ -262,4 +263,4 @@ class AgentService {
   }
 }
 
-export const agentService = new AgentService(); 
+export const agentService = new AgentService();

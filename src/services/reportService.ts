@@ -17,6 +17,7 @@ export interface ProjectReport {
   backlinksChange: number;
   lastAnalyzed: string;
   status: string;
+  mobileScoreChange?: number;
 }
 
 export interface IssueReport {
@@ -88,6 +89,7 @@ const mockProjectReports: ProjectReport[] = [
     backlinksChange: 3,
     lastAnalyzed: "2023-06-15T10:30:00Z",
     status: "active",
+    mobileScoreChange: 5,
   },
   {
     id: "2",
@@ -104,6 +106,7 @@ const mockProjectReports: ProjectReport[] = [
     backlinksChange: 8,
     lastAnalyzed: "2023-06-14T15:45:00Z",
     status: "active",
+    mobileScoreChange: 3,
   },
   {
     id: "3",
@@ -120,6 +123,7 @@ const mockProjectReports: ProjectReport[] = [
     backlinksChange: 12,
     lastAnalyzed: "2023-06-13T09:15:00Z",
     status: "needs-attention",
+    mobileScoreChange: 2,
   },
 ];
 
@@ -478,7 +482,7 @@ export function exportProjectData(projectId: string, options: {
     const mobileData = [
       ["Mobile Performance"],
       ["Mobile Score", project.mobileScore],
-      ["Mobile Score Change", `${project.mobileScoreChange}%`],
+      ["Mobile Score Change", project.mobileScoreChange ? `${project.mobileScoreChange}%` : "N/A"],
     ];
     
     const mobileSheet = XLSX.utils.aoa_to_sheet(mobileData);
@@ -608,7 +612,7 @@ export function exportAllProjectsData(options: {
         project.id,
         project.name,
         project.mobileScore,
-        `${project.mobileScoreChange}%`,
+        project.mobileScoreChange ? `${project.mobileScoreChange}%` : "N/A",
       ]),
     ];
     
@@ -696,4 +700,4 @@ export function generateSummaryReport() {
   };
   
   return report;
-} 
+}

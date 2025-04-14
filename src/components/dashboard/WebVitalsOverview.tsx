@@ -59,7 +59,7 @@ export function WebVitalsOverview({
   onRefresh 
 }: WebVitalsOverviewProps) {
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
-  const { data: webVitals, isLoading, error: webVitalsError } = useWebVitals();
+  const { data: webVitals, isLoading, error: webVitalsError } = useWebVitals({});
   const navigate = useNavigate();
   
   const handleViewDetails = () => {

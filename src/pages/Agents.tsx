@@ -24,7 +24,6 @@ const Agents = () => {
       frequency: 'daily',
       time: '00:00'
     },
-    settings: {},
     targets: []
   });
 
@@ -265,7 +264,7 @@ const Agents = () => {
                 <Label htmlFor="frequency">Frequency</Label>
                 <Select
                   value={newAgent.schedule?.frequency}
-                  onValueChange={(value) => setNewAgent({
+                  onValueChange={(value: ScheduleFrequency) => setNewAgent({
                     ...newAgent,
                     schedule: { ...newAgent.schedule, frequency: value }
                   })}
@@ -297,7 +296,6 @@ const Agents = () => {
                 <Label htmlFor="targets">Targets (one per line)</Label>
                 <Input
                   id="targets"
-                  as="textarea"
                   value={newAgent.targets?.join('\n')}
                   onChange={(e) => setNewAgent({
                     ...newAgent,
@@ -321,4 +319,4 @@ const Agents = () => {
   );
 };
 
-export default Agents; 
+export default Agents;
