@@ -1,17 +1,14 @@
 
 export class LocalSeoAgent {
-  async analyzeLocalPresence(business: string, location: string): Promise<any> {
-    console.log(`Analyzing local presence for ${business} in ${location}`);
+  async analyzeLocalPresence(location: string): Promise<any> {
+    console.log(`Analyzing local SEO presence for ${location}`);
     // Mock implementation
     return {
-      localRankings: Math.floor(Math.random() * 10) + 1,
-      gmb: {
-        completeness: Math.floor(Math.random() * 100),
-        reviews: Math.floor(Math.random() * 50),
-        averageRating: (Math.random() * 2 + 3).toFixed(1)
-      },
-      citations: Math.floor(Math.random() * 100) + 20,
-      localBacklinks: Math.floor(Math.random() * 50) + 10
+      googleBusinessRanking: Math.floor(Math.random() * 100),
+      localCitations: Math.floor(Math.random() * 100) + 20,
+      reviewScore: (Math.random() * 5).toFixed(1),
+      reviewCount: Math.floor(Math.random() * 50) + 5,
+      localCompetitors: ['Competitor A', 'Competitor B', 'Competitor C'],
     };
   }
 }

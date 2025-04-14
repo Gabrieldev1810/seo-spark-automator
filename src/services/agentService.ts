@@ -1,265 +1,244 @@
-import { Agent, AgentConfig, AgentResult, AgentMetrics } from '../types/agent';
+import { v4 as uuidv4 } from 'uuid';
+import { Agent, AgentConfig, AgentResult } from '../types/agent';
 import { LighthouseService } from './lighthouseService';
-import { KeywordService } from './keywordService';
 import { ContentService } from './contentService';
 
+// Mock storage for agents
+const agents: Agent[] = [];
+
+// Initialize services
+const lighthouseService = new LighthouseService();
+const contentService = new ContentService();
+
 class AgentService {
-  private agents: Map<string, Agent> = new Map();
-  private runningAgents: Set<string> = new Set();
-  private lighthouseService: LighthouseService;
-  private keywordService: KeywordService;
-  private contentService: ContentService;
-
   constructor() {
-    this.lighthouseService = new LighthouseService();
-    this.keywordService = new KeywordService();
-    this.contentService = new ContentService();
+    // Add some sample agents
+    if (agents.length === 0) {
+      this.createAgent({
+        name: 'SEO Monitor',
+        description: 'Monitors SEO metrics for your main website',
+        type: 'seo',
+        schedule: {
+          frequency: 'daily',
+          time: '08:00'
+        },
+        targets: ['https://example.com']
+      });
+      
+      this.createAgent({
+        name: 'Performance Tracker',
+        description: 'Tracks performance metrics for your blog',
+        type: 'performance',
+        schedule: {
+          frequency: 'weekly',
+          time: '12:00'
+        },
+        targets: ['https://blog.example.com']
+      });
+    }
   }
-
+  
+  getAllAgents(): Agent[] {
+    return [...agents];
+  }
+  
+  getAgentById(id: string): Agent | undefined {
+    return agents.find(agent => agent.id === id);
+  }
+  
   async createAgent(config: AgentConfig): Promise<Agent> {
-    const id = crypto.randomUUID();
-    const agent: Agent = {
-      id,
+    const now = new Date();
+    const nextRun = this.calculateNextRun(config.schedule);
+    
+    const newAgent: Agent = {
+      id: uuidv4(),
       config,
       status: 'inactive',
       lastRun: null,
-      nextRun: this.calculateNextRun(config.schedule),
+      nextRun: nextRun.toISOString(),
       results: []
     };
-
-    this.agents.set(id, agent);
-    return agent;
+    
+    agents.push(newAgent);
+    return newAgent;
   }
-
-  async updateAgent(id: string, config: Partial<AgentConfig>): Promise<Agent> {
-    const agent = this.agents.get(id);
-    if (!agent) {
-      throw new Error(`Agent with id ${id} not found`);
+  
+  async startAgent(id: string): Promise<Agent> {
+    const agentIndex = agents.findIndex(a => a.id === id);
+    if (agentIndex === -1) {
+      throw new Error(`Agent with ID ${id} not found`);
     }
-
-    const updatedAgent: Agent = {
-      ...agent,
-      config: { ...agent.config, ...config },
-      nextRun: this.calculateNextRun({ ...agent.config.schedule, ...config.schedule })
-    };
-
-    this.agents.set(id, updatedAgent);
-    return updatedAgent;
+    
+    agents[agentIndex].status = 'active';
+    
+    // Schedule next run if not already scheduled
+    if (!agents[agentIndex].nextRun) {
+      const nextRun = this.calculateNextRun(agents[agentIndex].config.schedule);
+      agents[agentIndex].nextRun = nextRun.toISOString();
+    }
+    
+    return agents[agentIndex];
   }
-
+  
+  async stopAgent(id: string): Promise<Agent> {
+    const agentIndex = agents.findIndex(a => a.id === id);
+    if (agentIndex === -1) {
+      throw new Error(`Agent with ID ${id} not found`);
+    }
+    
+    agents[agentIndex].status = 'inactive';
+    return agents[agentIndex];
+  }
+  
   async deleteAgent(id: string): Promise<void> {
-    if (this.runningAgents.has(id)) {
-      await this.stopAgent(id);
+    const agentIndex = agents.findIndex(a => a.id === id);
+    if (agentIndex === -1) {
+      throw new Error(`Agent with ID ${id} not found`);
     }
-    this.agents.delete(id);
+    
+    agents.splice(agentIndex, 1);
   }
-
-  async startAgent(id: string): Promise<void> {
-    const agent = this.agents.get(id);
+  
+  async runAgent(id: string): Promise<AgentResult> {
+    const agent = this.getAgentById(id);
     if (!agent) {
-      throw new Error(`Agent with id ${id} not found`);
+      throw new Error(`Agent with ID ${id} not found`);
     }
-
-    if (this.runningAgents.has(id)) {
-      throw new Error(`Agent ${id} is already running`);
+    
+    const agentIndex = agents.findIndex(a => a.id === id);
+    const now = new Date();
+    
+    try {
+      let result;
+      
+      switch (agent.config.type) {
+        case 'seo':
+          // Mock SEO analysis
+          result = {
+            seoScore: Math.floor(Math.random() * 100),
+            issues: Math.floor(Math.random() * 10),
+            keywords: Math.floor(Math.random() * 50) + 10
+          };
+          break;
+          
+        case 'performance':
+          // Use Lighthouse service
+          const lighthouseResults = await lighthouseService.analyze(agent.config.targets[0]);
+          result = lighthouseResults;
+          break;
+          
+        case 'content':
+          // Use Content service
+          const contentResults = await contentService.analyzeContent(agent.config.targets[0]);
+          result = contentResults;
+          break;
+          
+        default:
+          result = {
+            message: `Agent type ${agent.config.type} executed successfully`
+          };
+      }
+      
+      const agentResult: AgentResult = {
+        status: 'success',
+        timestamp: now.toISOString(),
+        data: result,
+        responseTime: Math.floor(Math.random() * 1000) + 500 // Mock response time
+      };
+      
+      // Update agent
+      agents[agentIndex].lastRun = now.toISOString();
+      agents[agentIndex].nextRun = this.calculateNextRun(agent.config.schedule).toISOString();
+      agents[agentIndex].results.unshift(agentResult);
+      
+      // Keep only the last 10 results
+      if (agents[agentIndex].results.length > 10) {
+        agents[agentIndex].results = agents[agentIndex].results.slice(0, 10);
+      }
+      
+      return agentResult;
+    } catch (error) {
+      const errorResult: AgentResult = {
+        status: 'error',
+        timestamp: now.toISOString(),
+        data: null,
+        error: error.message
+      };
+      
+      // Update agent
+      agents[agentIndex].status = 'error';
+      agents[agentIndex].results.unshift(errorResult);
+      
+      return errorResult;
     }
-
-    this.runningAgents.add(id);
-    agent.status = 'active';
-    this.agents.set(id, agent);
-
-    // Start the agent's task
-    this.runAgentTask(id);
   }
-
-  async stopAgent(id: string): Promise<void> {
-    const agent = this.agents.get(id);
-    if (!agent) {
-      throw new Error(`Agent with id ${id} not found`);
+  
+  private calculateNextRun(schedule: { frequency: string; time: string }): Date {
+    const [hours, minutes] = schedule.time.split(':').map(Number);
+    const now = new Date();
+    const nextRun = new Date();
+    
+    // Set the time
+    nextRun.setHours(hours, minutes, 0, 0);
+    
+    // If the time is in the past, move to the next occurrence based on frequency
+    if (nextRun <= now) {
+      switch (schedule.frequency) {
+        case 'hourly':
+          nextRun.setHours(nextRun.getHours() + 1);
+          break;
+        case 'daily':
+          nextRun.setDate(nextRun.getDate() + 1);
+          break;
+        case 'weekly':
+          nextRun.setDate(nextRun.getDate() + 7);
+          break;
+        case 'monthly':
+          nextRun.setMonth(nextRun.getMonth() + 1);
+          break;
+      }
     }
-
-    this.runningAgents.delete(id);
-    agent.status = 'inactive';
-    this.agents.set(id, agent);
+    
+    return nextRun;
   }
-
-  getAllAgents(): Agent[] {
-    return Array.from(this.agents.values());
-  }
-
-  getAgentMetrics(): AgentMetrics {
-    const agents = this.getAllAgents();
+  
+  getAgentMetrics() {
     const totalAgents = agents.length;
     const activeAgents = agents.filter(a => a.status === 'active').length;
     const errorAgents = agents.filter(a => a.status === 'error').length;
-    const totalRuns = agents.reduce((sum, a) => sum + a.results.length, 0);
-    const successfulRuns = agents.reduce((sum, a) => 
-      sum + a.results.filter(r => r.status === 'success').length, 0
-    );
-    const averageResponseTime = agents.reduce((sum, a) => 
-      sum + a.results.reduce((total, r) => total + (r.responseTime || 0), 0), 0
-    ) / totalRuns || 0;
-
+    
+    // Calculate total runs and success rate
+    let totalRuns = 0;
+    let successfulRuns = 0;
+    let totalResponseTime = 0;
+    let runs = 0;
+    
+    agents.forEach(agent => {
+      totalRuns += agent.results.length;
+      
+      agent.results.forEach(result => {
+        if (result.status === 'success') {
+          successfulRuns++;
+        }
+        
+        if (result.responseTime) {
+          totalResponseTime += result.responseTime;
+          runs++;
+        }
+      });
+    });
+    
+    const successRate = totalRuns > 0 ? (successfulRuns / totalRuns) * 100 : 0;
+    const averageResponseTime = runs > 0 ? totalResponseTime / runs : 0;
+    
     return {
       totalAgents,
       activeAgents,
       errorAgents,
       totalRuns,
-      successRate: totalRuns ? (successfulRuns / totalRuns) * 100 : 0,
+      successRate,
       averageResponseTime
     };
-  }
-
-  private async runAgentTask(id: string): Promise<void> {
-    const agent = this.agents.get(id);
-    if (!agent || !this.runningAgents.has(id)) {
-      return;
-    }
-
-    try {
-      const startTime = Date.now();
-      let result: AgentResult;
-
-      switch (agent.config.type) {
-        case 'seo':
-          result = await this.runSeoTask(agent);
-          break;
-        case 'performance':
-          result = await this.runPerformanceTask(agent);
-          break;
-        case 'content':
-          result = await this.runContentTask(agent);
-          break;
-        case 'keyword':
-          result = await this.runKeywordTask(agent);
-          break;
-        case 'backlink':
-          result = await this.runBacklinkTask(agent);
-          break;
-        default:
-          throw new Error(`Unknown agent type: ${agent.config.type}`);
-      }
-
-      result.responseTime = Date.now() - startTime;
-      agent.results.push(result);
-      agent.lastRun = new Date().toISOString();
-      agent.nextRun = this.calculateNextRun(agent.config.schedule);
-      agent.status = 'active';
-    } catch (error) {
-      agent.status = 'error';
-      agent.results.push({
-        status: 'error',
-        timestamp: new Date().toISOString(),
-        data: { error: error.message },
-        error: error.message
-      });
-    }
-
-    this.agents.set(id, agent);
-
-    // Schedule next run if agent is still active
-    if (this.runningAgents.has(id)) {
-      const delay = this.calculateDelay(agent.config.schedule);
-      setTimeout(() => this.runAgentTask(id), delay);
-    }
-  }
-
-  private async runSeoTask(agent: Agent): Promise<AgentResult> {
-    // Implement SEO monitoring logic
-    return {
-      status: 'success',
-      timestamp: new Date().toISOString(),
-      data: {
-        message: 'SEO task completed successfully'
-      }
-    };
-  }
-
-  private async runPerformanceTask(agent: Agent): Promise<AgentResult> {
-    const results = await Promise.all(
-      agent.config.targets.map(url => 
-        this.lighthouseService.analyze(url)
-      )
-    );
-
-    return {
-      status: 'success',
-      timestamp: new Date().toISOString(),
-      data: {
-        results
-      }
-    };
-  }
-
-  private async runContentTask(agent: Agent): Promise<AgentResult> {
-    // Implement content analysis logic
-    return {
-      status: 'success',
-      timestamp: new Date().toISOString(),
-      data: {
-        message: 'Content task completed successfully'
-      }
-    };
-  }
-
-  private async runKeywordTask(agent: Agent): Promise<AgentResult> {
-    // Implement keyword analysis logic
-    return {
-      status: 'success',
-      timestamp: new Date().toISOString(),
-      data: {
-        message: 'Keyword task completed successfully'
-      }
-    };
-  }
-
-  private async runBacklinkTask(agent: Agent): Promise<AgentResult> {
-    // Implement backlink analysis logic
-    return {
-      status: 'success',
-      timestamp: new Date().toISOString(),
-      data: {
-        message: 'Backlink task completed successfully'
-      }
-    };
-  }
-
-  private calculateNextRun(schedule: AgentConfig['schedule']): string | null {
-    if (!schedule) return null;
-
-    const now = new Date();
-    const [hours, minutes] = schedule.time.split(':').map(Number);
-    const nextRun = new Date(now);
-    nextRun.setHours(hours, minutes, 0, 0);
-
-    if (nextRun <= now) {
-      nextRun.setDate(nextRun.getDate() + 1);
-    }
-
-    switch (schedule.frequency) {
-      case 'hourly':
-        nextRun.setHours(nextRun.getHours() + 1);
-        break;
-      case 'daily':
-        // Already set to next day
-        break;
-      case 'weekly':
-        nextRun.setDate(nextRun.getDate() + 7);
-        break;
-      case 'monthly':
-        nextRun.setMonth(nextRun.getMonth() + 1);
-        break;
-    }
-
-    return nextRun.toISOString();
-  }
-
-  private calculateDelay(schedule: AgentConfig['schedule']): number {
-    if (!schedule) return 0;
-
-    const nextRun = new Date(this.calculateNextRun(schedule)!);
-    const now = new Date();
-    return Math.max(0, nextRun.getTime() - now.getTime());
   }
 }
 

@@ -1,19 +1,15 @@
 
 export class AnalyticsAgent {
-  async getTrafficInsights(url: string, period: string = '30d'): Promise<any> {
-    console.log(`Getting traffic insights for ${url} over ${period}`);
+  async analyzeTrafficData(url: string, period: string = 'last30days'): Promise<any> {
+    console.log(`Analyzing traffic data for ${url} over ${period}`);
     // Mock implementation
     return {
       visitors: Math.floor(Math.random() * 10000) + 1000,
-      pageViews: Math.floor(Math.random() * 30000) + 5000,
-      bounceRate: (Math.random() * 60 + 20).toFixed(2),
-      avgSessionDuration: (Math.random() * 180 + 60).toFixed(0),
-      sources: {
-        organic: Math.floor(Math.random() * 60) + 20,
-        social: Math.floor(Math.random() * 20) + 5,
-        direct: Math.floor(Math.random() * 20) + 5,
-        referral: Math.floor(Math.random() * 20) + 5
-      }
+      pageviews: Math.floor(Math.random() * 25000) + 2000,
+      bounceRate: Math.floor(Math.random() * 100),
+      averageSessionDuration: Math.floor(Math.random() * 300) + 60,
+      conversionRate: (Math.random() * 10).toFixed(2),
+      topReferrers: ['Google', 'Facebook', 'Twitter', 'Direct'],
     };
   }
 }

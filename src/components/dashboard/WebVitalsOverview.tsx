@@ -59,14 +59,13 @@ export function WebVitalsOverview({
   onRefresh 
 }: WebVitalsOverviewProps) {
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
-  const { data: webVitals, isLoading, error: webVitalsError } = useWebVitals({});
+  const { data: webVitals, isLoading, error: webVitalsError } = useWebVitals("example.com");
   const navigate = useNavigate();
   
   const handleViewDetails = () => {
     navigate("/web-vitals");
   };
 
-  // Mock data for the trend charts
   const trendData = {
     lcp: [
       { date: "2024-01", value: 2.8 },
@@ -93,8 +92,7 @@ export function WebVitalsOverview({
       { date: "2024-06", value: 0.03 },
     ],
   };
-  
-  // Mock data for improvement suggestions
+
   const improvementSuggestions = {
     lcp: [
       { 

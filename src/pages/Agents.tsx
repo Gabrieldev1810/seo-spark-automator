@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { AppLayout } from "../components/layout/AppLayout";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../components/ui/card";
@@ -9,7 +10,7 @@ import { useToast } from "../components/ui/use-toast";
 import { Badge } from "../components/ui/badge";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "../components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
-import { Agent, AgentConfig, AgentType } from "../types/agent";
+import { Agent, AgentConfig, AgentType, ScheduleFrequency } from "../types/agent";
 import { agentService } from "../services/agentService";
 
 const Agents = () => {
