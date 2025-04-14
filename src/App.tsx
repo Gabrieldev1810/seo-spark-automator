@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -19,10 +18,10 @@ import Mobile from "./pages/Mobile";
 import LocalSeo from "./pages/LocalSeo";
 import Content from "./pages/Content";
 import AgentSystem from "./pages/AgentSystem";
+import Projects from './pages/Projects';
 
 const queryClient = new QueryClient();
 
-// Protected route component
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { user, loading } = useAuth();
 
@@ -37,7 +36,6 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   return <>{children}</>;
 };
 
-// Auth routes redirects to dashboard if already logged in
 const AuthRoute = ({ children }: { children: React.ReactNode }) => {
   const { user, loading } = useAuth();
 
@@ -55,11 +53,9 @@ const AuthRoute = ({ children }: { children: React.ReactNode }) => {
 const AppRoutes = () => {
   return (
     <Routes>
-      {/* Auth Routes */}
       <Route path="/auth/login" element={<AuthRoute><Login /></AuthRoute>} />
       <Route path="/auth/signup" element={<AuthRoute><Signup /></AuthRoute>} />
       
-      {/* Protected Routes */}
       <Route path="/" element={<ProtectedRoute><Index /></ProtectedRoute>} />
       <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
       <Route path="/web-vitals" element={<ProtectedRoute><WebVitals /></ProtectedRoute>} />
@@ -70,8 +66,8 @@ const AppRoutes = () => {
       <Route path="/local-seo" element={<ProtectedRoute><LocalSeo /></ProtectedRoute>} />
       <Route path="/content" element={<ProtectedRoute><Content /></ProtectedRoute>} />
       <Route path="/agent-system" element={<ProtectedRoute><AgentSystem /></ProtectedRoute>} />
+      <Route path="/projects" element={<ProtectedRoute><Projects /></ProtectedRoute>} />
       
-      {/* Role-based Routes examples */}
       <Route 
         path="/admin" 
         element={
@@ -90,7 +86,6 @@ const AppRoutes = () => {
         } 
       />
       
-      {/* 404 Route */}
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

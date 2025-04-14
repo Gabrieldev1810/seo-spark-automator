@@ -13,6 +13,7 @@ import { Badge } from "../components/ui/badge";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "../components/ui/accordion";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "../components/ui/dialog";
 import { LighthouseService, LighthouseAuditResult, LighthouseMetrics, LighthouseOpportunity, LighthouseDiagnostic } from "../services/lighthouseService";
+import { useProjects } from "@/services/projectService";
 
 // Web vitals explanations
 const webVitalsExplanations = {
@@ -302,7 +303,9 @@ const mockPassedAudits = [
 
 const WebVitals = () => {
   const { toast } = useToast();
-  const [url, setUrl] = useState("");
+  const { activeProject } = useProjects();
+  const defaultUrl = activeProject?.url || "";
+  const [url, setUrl] = useState(defaultUrl);
   const [device, setDevice] = useState<"mobile" | "desktop">("mobile");
   const [loading, setLoading] = useState(false);
   const [auditResult, setAuditResult] = useState<LighthouseAuditResult | null>(null);
@@ -311,6 +314,12 @@ const WebVitals = () => {
   const [exportFormat, setExportFormat] = useState<"pdf" | "csv" | "json">("pdf");
   
   const lighthouseService = new LighthouseService();
+
+  useEffect(() => {
+    if (activeProject?.url) {
+      setUrl(activeProject.url);
+    }
+  }, [activeProject]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

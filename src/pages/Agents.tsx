@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { AppLayout } from "../components/layout/AppLayout";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../components/ui/card";
@@ -12,11 +11,15 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs";
 import { Agent, AgentConfig, AgentType, ScheduleFrequency } from "../types/agent";
 import { agentService } from "../services/agentService";
+import { useProjects } from "../services/projectService";
 
 const Agents = () => {
   const { toast } = useToast();
   const [agents, setAgents] = useState<Agent[]>([]);
   const [showCreateDialog, setShowCreateDialog] = useState(false);
+  
+  const { activeProject } = useProjects();
+  
   const [newAgent, setNewAgent] = useState<Partial<AgentConfig>>({
     type: 'seo',
     name: '',
@@ -25,12 +28,21 @@ const Agents = () => {
       frequency: 'daily',
       time: '00:00'
     },
-    targets: []
+    targets: activeProject ? [activeProject.url] : []
   });
 
   useEffect(() => {
     loadAgents();
   }, []);
+
+  useEffect(() => {
+    if (activeProject?.url) {
+      setNewAgent(prev => ({
+        ...prev,
+        targets: [activeProject.url]
+      }));
+    }
+  }, [activeProject]);
 
   const loadAgents = () => {
     const allAgents = agentService.getAllAgents();

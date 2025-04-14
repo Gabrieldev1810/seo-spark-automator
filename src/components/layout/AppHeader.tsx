@@ -32,13 +32,21 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import { searchPlaces, PlacePrediction } from "@/services/placesService";
 import { cn } from "@/lib/utils";
+import { useProjects, Project } from "@/services/projectService";
 
-// Mock data for command palette
 const searchItems = [
   {
     title: "Dashboard",
@@ -65,6 +73,8 @@ export function AppHeader() {
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
   const navigate = useNavigate();
+  
+  const { projects, activeProject, addProject, setActiveProject } = useProjects();
 
   useEffect(() => {
     const searchPlacesDebounced = async () => {
@@ -104,14 +114,14 @@ export function AppHeader() {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const projectData = {
-      name: formData.get("name"),
-      url: formData.get("url"),
-      description: formData.get("description"),
+      name: formData.get("name") as string,
+      url: formData.get("url") as string,
+      description: formData.get("description") as string || undefined,
     };
 
     try {
-      // Here you would typically make an API call to create the project
-      console.log("Creating new project:", projectData);
+      addProject(projectData);
+      
       toast({
         title: "Project Created",
         description: "Your new project has been created successfully.",
@@ -141,6 +151,41 @@ export function AppHeader() {
           />
         </div>
       </div>
+      
+      <div className="hidden md:flex items-center mr-4">
+        {activeProject ? (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline" className="max-w-[200px] overflow-hidden text-ellipsis whitespace-nowrap">
+                <Globe className="mr-2 h-4 w-4" />
+                {activeProject.name}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Switch Project</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              {projects.map((project) => (
+                <DropdownMenuItem
+                  key={project.id}
+                  className={cn(
+                    "cursor-pointer",
+                    project.id === activeProject.id && "bg-primary/10"
+                  )}
+                  onClick={() => setActiveProject(project.id)}
+                >
+                  {project.name}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
+        ) : (
+          <Button variant="outline" onClick={() => setIsNewProjectOpen(true)}>
+            <Plus className="mr-2 h-4 w-4" />
+            Add Project
+          </Button>
+        )}
+      </div>
+      
       <div className="flex items-center gap-2">
         <Button variant="outline" size="icon">
           <Bell className="h-4 w-4" />
@@ -217,7 +262,6 @@ export function AppHeader() {
                 <CommandItem
                   key={place.place_id}
                   onSelect={() => {
-                    // Handle place selection
                     console.log("Selected place:", place);
                     setIsCommandOpen(false);
                   }}
