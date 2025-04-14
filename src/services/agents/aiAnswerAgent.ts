@@ -2,7 +2,7 @@ import { KeywordAgent } from './keywordAgent';
 import { ContentAgent } from './contentAgent';
 import { SchemaAgent } from './schemaAgent';
 import { LocalSeoAgent } from './localSeoAgent';
-import { UxAgent } from './uxAgent';
+import { UXAgent } from './uxAgent';
 import { AnalyticsAgent } from './analyticsAgent';
 
 // Types for the AIAnswerAgent
@@ -50,7 +50,7 @@ export class AIAnswerAgent {
   private contentAgent: ContentAgent;
   private schemaAgent: SchemaAgent;
   private localSeoAgent: LocalSeoAgent;
-  private uxAgent: UxAgent;
+  private uxAgent: UXAgent;
   private analyticsAgent: AnalyticsAgent;
 
   constructor() {
@@ -58,7 +58,7 @@ export class AIAnswerAgent {
     this.contentAgent = new ContentAgent();
     this.schemaAgent = new SchemaAgent();
     this.localSeoAgent = new LocalSeoAgent();
-    this.uxAgent = new UxAgent();
+    this.uxAgent = new UXAgent();
     this.analyticsAgent = new AnalyticsAgent();
   }
 
@@ -474,4 +474,4 @@ export class AIAnswerAgent {
   private capitalizeFirstLetter(string: string): string {
     return string.charAt(0).toUpperCase() + string.slice(1);
   }
-} 
+}
