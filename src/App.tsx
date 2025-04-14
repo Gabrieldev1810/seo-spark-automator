@@ -21,6 +21,7 @@ import LocalSeo from "./pages/LocalSeo";
 import Content from "./pages/Content";
 import AgentSystem from "./pages/AgentSystem";
 import Projects from './pages/Projects';
+import Agents from './pages/Agents';
 
 const queryClient = new QueryClient();
 
@@ -69,6 +70,7 @@ const AppRoutes = () => {
       <Route path="/content" element={<ProtectedRoute><Content /></ProtectedRoute>} />
       <Route path="/agent-system" element={<ProtectedRoute><AgentSystem /></ProtectedRoute>} />
       <Route path="/projects" element={<ProtectedRoute><Projects /></ProtectedRoute>} />
+      <Route path="/agents" element={<ProtectedRoute><Agents /></ProtectedRoute>} />
       
       <Route 
         path="/admin" 
