@@ -1,7 +1,20 @@
+
 import React, { useState } from "react";
 import { useLocation, Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { Home, Globe, FileText, Settings, Users, BarChart } from "lucide-react";
+import { 
+  Home, 
+  Globe, 
+  FileText, 
+  Settings, 
+  Users, 
+  BarChart, 
+  Mic, 
+  Shield, 
+  Smartphone, 
+  MapPin,
+  Bot
+} from "lucide-react";
 import { useIsMobile } from "@/hooks/use-is-mobile";
 import {
   Sheet,
@@ -74,6 +87,56 @@ export function AppSidebar() {
                   <span>Web Vitals</span>
                 </Link>
                 <Link
+                  to="/ai-content"
+                  className={cn(
+                    "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground transition-colors",
+                    pathname === '/ai-content' && "bg-accent text-accent-foreground",
+                  )}
+                >
+                  <Bot className="h-4 w-4" />
+                  <span>AI Content</span>
+                </Link>
+                <Link
+                  to="/voice-search"
+                  className={cn(
+                    "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground transition-colors",
+                    pathname === '/voice-search' && "bg-accent text-accent-foreground",
+                  )}
+                >
+                  <Mic className="h-4 w-4" />
+                  <span>Voice Search</span>
+                </Link>
+                <Link
+                  to="/e-e-a-t"
+                  className={cn(
+                    "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground transition-colors",
+                    pathname === '/e-e-a-t' && "bg-accent text-accent-foreground",
+                  )}
+                >
+                  <Shield className="h-4 w-4" />
+                  <span>E-E-A-T</span>
+                </Link>
+                <Link
+                  to="/mobile"
+                  className={cn(
+                    "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground transition-colors",
+                    pathname === '/mobile' && "bg-accent text-accent-foreground",
+                  )}
+                >
+                  <Smartphone className="h-4 w-4" />
+                  <span>Mobile</span>
+                </Link>
+                <Link
+                  to="/local-seo"
+                  className={cn(
+                    "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground transition-colors",
+                    pathname === '/local-seo' && "bg-accent text-accent-foreground",
+                  )}
+                >
+                  <MapPin className="h-4 w-4" />
+                  <span>Local SEO</span>
+                </Link>
+                <Link
                   to="/agents"
                   className={cn(
                     "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground transition-colors",
@@ -84,14 +147,14 @@ export function AppSidebar() {
                   <span>Agents</span>
                 </Link>
                 <Link
-                  to="/settings"
+                  to="/content"
                   className={cn(
                     "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground transition-colors",
-                    pathname === '/settings' && "bg-accent text-accent-foreground",
+                    pathname === '/content' && "bg-accent text-accent-foreground",
                   )}
                 >
-                  <Settings className="h-4 w-4" />
-                  <span>Settings</span>
+                  <FileText className="h-4 w-4" />
+                  <span>Content</span>
                 </Link>
                 <Link
                   to="/agent-system"
@@ -154,6 +217,56 @@ export function AppSidebar() {
                 {!isCollapsed && <span>Web Vitals</span>}
               </Link>
               <Link
+                to="/ai-content"
+                className={cn(
+                  "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground transition-colors",
+                  pathname === '/ai-content' && "bg-accent text-accent-foreground",
+                )}
+              >
+                <Bot className="h-4 w-4" />
+                {!isCollapsed && <span>AI Content</span>}
+              </Link>
+              <Link
+                to="/voice-search"
+                className={cn(
+                  "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground transition-colors",
+                  pathname === '/voice-search' && "bg-accent text-accent-foreground",
+                )}
+              >
+                <Mic className="h-4 w-4" />
+                {!isCollapsed && <span>Voice Search</span>}
+              </Link>
+              <Link
+                to="/e-e-a-t"
+                className={cn(
+                  "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground transition-colors",
+                  pathname === '/e-e-a-t' && "bg-accent text-accent-foreground",
+                )}
+              >
+                <Shield className="h-4 w-4" />
+                {!isCollapsed && <span>E-E-A-T</span>}
+              </Link>
+              <Link
+                to="/mobile"
+                className={cn(
+                  "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground transition-colors",
+                  pathname === '/mobile' && "bg-accent text-accent-foreground",
+                )}
+              >
+                <Smartphone className="h-4 w-4" />
+                {!isCollapsed && <span>Mobile</span>}
+              </Link>
+              <Link
+                to="/local-seo"
+                className={cn(
+                  "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground transition-colors",
+                  pathname === '/local-seo' && "bg-accent text-accent-foreground",
+                )}
+              >
+                <MapPin className="h-4 w-4" />
+                {!isCollapsed && <span>Local SEO</span>}
+              </Link>
+              <Link
                 to="/agents"
                 className={cn(
                   "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground transition-colors",
@@ -164,14 +277,14 @@ export function AppSidebar() {
                 {!isCollapsed && <span>Agents</span>}
               </Link>
               <Link
-                to="/settings"
+                to="/content"
                 className={cn(
                   "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground transition-colors",
-                  pathname === '/settings' && "bg-accent text-accent-foreground",
+                  pathname === '/content' && "bg-accent text-accent-foreground",
                 )}
               >
-                <Settings className="h-4 w-4" />
-                {!isCollapsed && <span>Settings</span>}
+                <FileText className="h-4 w-4" />
+                {!isCollapsed && <span>Content</span>}
               </Link>
               <Link
                 to="/agent-system"
