@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { AgentProvider } from "@/contexts/AgentContext";
@@ -69,7 +68,7 @@ const AgentSystemContent = () => {
   const { agents, createTask } = useAgents();
   const [openTaskDialog, setOpenTaskDialog] = useState(false);
   const [taskForm, setTaskForm] = useState({
-    agentType: "ContentAgent" as AgentType,
+    agentType: "ContentAgent" as Exclude<AgentType, 'MCP'>,
     title: "",
     description: "",
     priority: "medium" as "low" | "medium" | "high" | "critical"
@@ -105,8 +104,13 @@ const AgentSystemContent = () => {
                 key={agent.type} 
                 agent={agent} 
                 onClick={() => {
-                  setTaskForm(prev => ({ ...prev, agentType: agent.type }));
-                  setOpenTaskDialog(true);
+                  if (agent.type !== 'MCP') {
+                    setTaskForm(prev => ({ 
+                      ...prev, 
+                      agentType: agent.type as Exclude<AgentType, 'MCP'>
+                    }));
+                    setOpenTaskDialog(true);
+                  }
                 }}
               />
             ))}
@@ -206,7 +210,7 @@ const AgentSystemContent = () => {
               <label className="text-sm font-medium">Assign To Agent</label>
               <Select 
                 value={taskForm.agentType} 
-                onValueChange={(v) => setTaskForm(prev => ({ ...prev, agentType: v as AgentType }))}
+                onValueChange={(v) => setTaskForm(prev => ({ ...prev, agentType: v as Exclude<AgentType, 'MCP'> }))}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select an agent" />
