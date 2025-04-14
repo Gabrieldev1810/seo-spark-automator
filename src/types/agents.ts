@@ -1,5 +1,5 @@
 
-export type AgentType = 'ContentAgent' | 'UXAgent' | 'LocalAgent' | 'TrustAgent';
+export type AgentType = 'ContentAgent' | 'UXAgent' | 'LocalAgent' | 'TrustAgent' | 'MCP';
 
 export type AgentStatus = 'idle' | 'processing' | 'completed' | 'error';
 
@@ -8,7 +8,7 @@ export type AgentPriority = 'low' | 'medium' | 'high' | 'critical';
 export interface AgentMessage {
   id: string;
   from: AgentType;
-  to: AgentType | 'MCP';
+  to: AgentType;
   content: string;
   timestamp: Date;
   metadata?: Record<string, any>;

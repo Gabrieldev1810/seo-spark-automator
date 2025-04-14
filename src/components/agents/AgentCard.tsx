@@ -3,13 +3,14 @@ import React from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Agent, AgentStatus } from "@/types/agents";
-import { Brain, Laptop, MapPin, ShieldCheck } from "lucide-react";
+import { Brain, Laptop, MapPin, ShieldCheck, Server } from "lucide-react";
 
 const agentIcons = {
   ContentAgent: Brain,
   UXAgent: Laptop,
   LocalAgent: MapPin,
   TrustAgent: ShieldCheck,
+  MCP: Server,
 };
 
 const statusColors = {
@@ -81,6 +82,8 @@ export function getAgentColor(agentType: Agent['type']): string {
       return '#f59e0b'; // amber
     case 'TrustAgent':
       return '#8b5cf6'; // purple
+    case 'MCP':
+      return '#6b7280'; // gray
     default:
       return '#6b7280'; // gray
   }
