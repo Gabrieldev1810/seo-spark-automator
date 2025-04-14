@@ -169,7 +169,11 @@ export const ProjectProvider = ({ children }: { children: ReactNode }) => {
     },
   };
 
-  return <ProjectContext.Provider value={value}>{children}</ProjectContext.Provider>;
+  return React.createElement(
+    ProjectContext.Provider, 
+    { value }, 
+    children
+  );
 };
 
 export const useProjects = () => {
