@@ -6,11 +6,12 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { formatDistanceToNow } from "date-fns";
 import { getAgentColor } from "@/components/agents/AgentCard";
 import { Brain, Laptop, MapPin, ShieldCheck, Server } from "lucide-react";
+import { AgentType } from "@/types/agents";
 
 export function MessageList() {
   const { messages, agents } = useAgents();
   
-  const agentIcons = {
+  const agentIcons: Record<AgentType, React.ElementType> = {
     ContentAgent: Brain,
     UXAgent: Laptop,
     LocalAgent: MapPin,
@@ -37,18 +38,18 @@ export function MessageList() {
               </p>
             ) : (
               sortedMessages.map((message) => {
-                const FromIcon = agentIcons[message.from as keyof typeof agentIcons];
-                const ToIcon = agentIcons[message.to as keyof typeof agentIcons];
+                const FromIcon = agentIcons[message.from];
+                const ToIcon = agentIcons[message.to];
                 
                 return (
                   <div key={message.id} className="flex gap-3 py-3 border-b border-gray-100 last:border-0">
                     <div 
                       className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
-                      style={{ backgroundColor: `${getAgentColor(message.from as any)}20` }}
+                      style={{ backgroundColor: `${getAgentColor(message.from)}20` }}
                     >
                       <FromIcon 
                         className="h-5 w-5" 
-                        style={{ color: getAgentColor(message.from as any) }} 
+                        style={{ color: getAgentColor(message.from) }} 
                       />
                     </div>
                     
@@ -56,11 +57,11 @@ export function MessageList() {
                       <div className="flex items-center gap-2">
                         <div className="flex items-center gap-1.5">
                           <span className="font-medium">
-                            {message.from === 'MCP' ? 'MCP Server' : agents[message.from].name}
+                            {message.from === 'MCP' ? 'MCP Server' : agents[message.from as Exclude<AgentType, 'MCP'>]?.name || 'MCP Server'}
                           </span>
                           <span className="text-gray-400">→</span>
                           <span className="font-medium">
-                            {message.to === 'MCP' ? 'MCP Server' : agents[message.to as keyof typeof agents]?.name || 'MCP Server'}
+                            {message.to === 'MCP' ? 'MCP Server' : agents[message.to as Exclude<AgentType, 'MCP'>]?.name || 'MCP Server'}
                           </span>
                         </div>
                         <span className="text-xs text-gray-400">

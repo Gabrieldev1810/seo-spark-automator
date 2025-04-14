@@ -16,8 +16,8 @@ import { Send } from "lucide-react";
 
 export function AgentConsole() {
   const { agents, sendMessage } = useAgents();
-  const [fromAgent, setFromAgent] = useState<AgentType>("ContentAgent");
-  const [toAgent, setToAgent] = useState<AgentType | "MCP">("MCP");
+  const [fromAgent, setFromAgent] = useState<Exclude<AgentType, 'MCP'>>("ContentAgent");
+  const [toAgent, setToAgent] = useState<AgentType>("MCP");
   const [message, setMessage] = useState("");
   const [isSending, setIsSending] = useState(false);
 
@@ -42,13 +42,16 @@ export function AgentConsole() {
         <div className="flex flex-col md:flex-row gap-4">
           <div className="flex-1 space-y-2">
             <label className="text-sm font-medium">From Agent</label>
-            <Select value={fromAgent} onValueChange={(v) => setFromAgent(v as AgentType)}>
+            <Select 
+              value={fromAgent} 
+              onValueChange={(v) => setFromAgent(v as Exclude<AgentType, 'MCP'>)}
+            >
               <SelectTrigger>
                 <SelectValue placeholder="Select source agent" />
               </SelectTrigger>
               <SelectContent>
                 {Object.keys(agents).map((agent) => (
-                  <SelectItem key={agent} value={agent}>{agents[agent as AgentType].name}</SelectItem>
+                  <SelectItem key={agent} value={agent}>{agents[agent as Exclude<AgentType, 'MCP'>].name}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -56,7 +59,7 @@ export function AgentConsole() {
           
           <div className="flex-1 space-y-2">
             <label className="text-sm font-medium">To</label>
-            <Select value={toAgent} onValueChange={(v) => setToAgent(v as AgentType | "MCP")}>
+            <Select value={toAgent} onValueChange={(v) => setToAgent(v as AgentType)}>
               <SelectTrigger>
                 <SelectValue placeholder="Select destination" />
               </SelectTrigger>
@@ -65,7 +68,7 @@ export function AgentConsole() {
                 {Object.keys(agents)
                   .filter(agent => agent !== fromAgent)
                   .map((agent) => (
-                    <SelectItem key={agent} value={agent}>{agents[agent as AgentType].name}</SelectItem>
+                    <SelectItem key={agent} value={agent}>{agents[agent as Exclude<AgentType, 'MCP'>].name}</SelectItem>
                   ))
                 }
               </SelectContent>

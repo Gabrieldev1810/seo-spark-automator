@@ -4,15 +4,15 @@ import { v4 as uuidv4 } from 'uuid';
 import { Agent, AgentMessage, AgentTask, AgentType } from '@/types/agents';
 
 interface AgentContextType {
-  agents: Record<AgentType, Agent>;
+  agents: Record<Exclude<AgentType, 'MCP'>, Agent>;
   messages: AgentMessage[];
   tasks: AgentTask[];
-  sendMessage: (from: AgentType, to: AgentType | 'MCP', content: string, metadata?: Record<string, any>) => void;
-  createTask: (agentType: AgentType, title: string, description: string, priority: AgentTask['priority']) => void;
+  sendMessage: (from: AgentType, to: AgentType, content: string, metadata?: Record<string, any>) => void;
+  createTask: (agentType: Exclude<AgentType, 'MCP'>, title: string, description: string, priority: AgentTask['priority']) => void;
   completeTask: (taskId: string, result: string) => void;
 }
 
-const defaultAgents: Record<AgentType, Agent> = {
+const defaultAgents: Record<Exclude<AgentType, 'MCP'>, Agent> = {
   ContentAgent: {
     type: 'ContentAgent',
     name: 'Content Intelligence Agent',
@@ -70,7 +70,7 @@ const defaultAgents: Record<AgentType, Agent> = {
 const AgentContext = createContext<AgentContextType | undefined>(undefined);
 
 export const AgentProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [agents, setAgents] = useState<Record<AgentType, Agent>>(defaultAgents);
+  const [agents, setAgents] = useState<Record<Exclude<AgentType, 'MCP'>, Agent>>(defaultAgents);
   const [messages, setMessages] = useState<AgentMessage[]>([]);
   const [tasks, setTasks] = useState<AgentTask[]>([]);
 
@@ -110,7 +110,7 @@ export const AgentProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const sendMessage = (
     from: AgentType, 
-    to: AgentType | 'MCP', 
+    to: AgentType, 
     content: string,
     metadata?: Record<string, any>
   ) => {
@@ -125,36 +125,52 @@ export const AgentProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
     setMessages(prev => [...prev, newMessage]);
 
-    // Update agent status for sending and receiving agents
-    setAgents(prev => ({
-      ...prev,
-      [from]: {
-        ...prev[from],
-        status: 'processing',
-      },
-      ...(to !== 'MCP' ? {
-        [to]: {
-          ...prev[to],
+    // Update agent status for sending and receiving agents if they're not MCP
+    setAgents(prev => {
+      const updatedAgents = { ...prev };
+      
+      // Only update if from is not MCP and exists in agents
+      if (from !== 'MCP' && from in updatedAgents) {
+        updatedAgents[from as Exclude<AgentType, 'MCP'>] = {
+          ...updatedAgents[from as Exclude<AgentType, 'MCP'>],
           status: 'processing',
-        }
-      } : {})
-    }));
+        };
+      }
+      
+      // Only update if to is not MCP and exists in agents
+      if (to !== 'MCP' && to in updatedAgents) {
+        updatedAgents[to as Exclude<AgentType, 'MCP'>] = {
+          ...updatedAgents[to as Exclude<AgentType, 'MCP'>],
+          status: 'processing',
+        };
+      }
+      
+      return updatedAgents;
+    });
 
     // Reset status after a delay
     setTimeout(() => {
-      setAgents(prev => ({
-        ...prev,
-        [from]: {
-          ...prev[from],
-          status: 'idle',
-        },
-        ...(to !== 'MCP' ? {
-          [to]: {
-            ...prev[to],
+      setAgents(prev => {
+        const updatedAgents = { ...prev };
+        
+        // Only update if from is not MCP and exists in agents
+        if (from !== 'MCP' && from in updatedAgents) {
+          updatedAgents[from as Exclude<AgentType, 'MCP'>] = {
+            ...updatedAgents[from as Exclude<AgentType, 'MCP'>],
             status: 'idle',
-          }
-        } : {})
-      }));
+          };
+        }
+        
+        // Only update if to is not MCP and exists in agents
+        if (to !== 'MCP' && to in updatedAgents) {
+          updatedAgents[to as Exclude<AgentType, 'MCP'>] = {
+            ...updatedAgents[to as Exclude<AgentType, 'MCP'>],
+            status: 'idle',
+          };
+        }
+        
+        return updatedAgents;
+      });
     }, 2000);
   };
 
