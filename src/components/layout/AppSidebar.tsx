@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useLocation, Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
@@ -13,7 +12,8 @@ import {
   Shield, 
   Smartphone, 
   MapPin,
-  Bot
+  Bot,
+  LineChart
 } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-is-mobile";
 import {
@@ -75,6 +75,16 @@ export function AppSidebar() {
                 >
                   <Globe className="h-4 w-4" />
                   <span>Projects</span>
+                </Link>
+                <Link
+                  to="/seo-kpis"
+                  className={cn(
+                    "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground transition-colors",
+                    pathname === '/seo-kpis' && "bg-accent text-accent-foreground",
+                  )}
+                >
+                  <LineChart className="h-4 w-4" />
+                  <span>SEO KPIs</span>
                 </Link>
                 <Link
                   to="/web-vitals"
@@ -205,6 +215,16 @@ export function AppSidebar() {
               >
                 <Globe className="h-4 w-4" />
                 {!isCollapsed && <span>Projects</span>}
+              </Link>
+              <Link
+                to="/seo-kpis"
+                className={cn(
+                  "flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium hover:bg-accent hover:text-accent-foreground transition-colors",
+                  pathname === '/seo-kpis' && "bg-accent text-accent-foreground",
+                )}
+              >
+                <LineChart className="h-4 w-4" />
+                {!isCollapsed && <span>SEO KPIs</span>}
               </Link>
               <Link
                 to="/web-vitals"
